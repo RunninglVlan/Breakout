@@ -1,5 +1,4 @@
-#ifndef ANDROIDGLINVESTIGATIONS_RENDERER_H
-#define ANDROIDGLINVESTIGATIONS_RENDERER_H
+#pragma once
 
 #include <EGL/egl.h>
 #include <memory>
@@ -70,5 +69,3 @@ private:
     std::unique_ptr<Shader> shader_;
     std::vector<Model> models_;
 };
-
-#endif //ANDROIDGLINVESTIGATIONS_RENDERER_H

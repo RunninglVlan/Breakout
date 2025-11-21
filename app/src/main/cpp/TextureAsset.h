@@ -1,5 +1,4 @@
-#ifndef ANDROIDGLINVESTIGATIONS_TEXTUREASSET_H
-#define ANDROIDGLINVESTIGATIONS_TEXTUREASSET_H
+#pragma once
 
 #include <memory>
 #include <android/asset_manager.h>
@@ -30,5 +29,3 @@ private:
 
     GLuint textureID_;
 };
-
-#endif //ANDROIDGLINVESTIGATIONS_TEXTUREASSET_H

@@ -1,5 +1,4 @@
-#ifndef ANDROIDGLINVESTIGATIONS_SHADER_H
-#define ANDROIDGLINVESTIGATIONS_SHADER_H
+#pragma once
 
 #include <string>
 #include <GLES3/gl3.h>
@@ -94,5 +93,3 @@ private:
     GLint uv_;
     GLint projectionMatrix_;
 };
-
-#endif //ANDROIDGLINVESTIGATIONS_SHADER_H

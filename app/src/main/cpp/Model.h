@@ -1,5 +1,4 @@
-#ifndef ANDROIDGLINVESTIGATIONS_MODEL_H
-#define ANDROIDGLINVESTIGATIONS_MODEL_H
+#pragma once
 
 #include <vector>
 #include "TextureAsset.h"
@@ -62,5 +61,3 @@ private:
     std::vector<Index> indices_;
     std::shared_ptr<TextureAsset> spTexture_;
 };
-
-#endif //ANDROIDGLINVESTIGATIONS_MODEL_H

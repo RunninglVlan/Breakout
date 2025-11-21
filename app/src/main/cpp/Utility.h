@@ -1,5 +1,4 @@
-#ifndef ANDROIDGLINVESTIGATIONS_UTILITY_H
-#define ANDROIDGLINVESTIGATIONS_UTILITY_H
+#pragma once
 
 #include <cassert>
 
@@ -30,5 +29,3 @@ public:
 
     static float *buildIdentityMatrix(float *outMatrix);
 };
-
-#endif //ANDROIDGLINVESTIGATIONS_UTILITY_H

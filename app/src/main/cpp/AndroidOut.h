@@ -1,5 +1,4 @@
-#ifndef ANDROIDGLINVESTIGATIONS_ANDROIDOUT_H
-#define ANDROIDGLINVESTIGATIONS_ANDROIDOUT_H
+#pragma once
 
 #include <android/log.h>
 #include <sstream>
@@ -34,5 +33,3 @@ protected:
 private:
     const char* logTag_;
 };
-
-#endif //ANDROIDGLINVESTIGATIONS_ANDROIDOUT_H
