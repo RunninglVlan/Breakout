@@ -114,6 +114,12 @@ void Renderer::render() {
         }
     }
 
+    if (border_.has_value()) {
+        float color[] = {1.f, 1.f, 1.f, 1.f};
+        shader_->setColor(color);
+        shader_->drawBorder(border_.value());
+    }
+
     // Present the rendered image. This is an implicit glFlush.
     auto swapResult = eglSwapBuffers(display_, surface_);
     assert(swapResult == EGL_TRUE);
@@ -195,7 +201,8 @@ void Renderer::initRenderer() {
     auto fragment = Utility::loadStringFromAsset(assetManager, "shaders/fragment.glsl");
 
     shader_ = std::unique_ptr<Shader>(
-            Shader::loadShader(vertex, fragment, "inPosition", "inUV", "uProjection"));
+            Shader::loadShader(vertex, fragment, "inPosition", "inUV", "uProjection", "uColor",
+                             "uHasTexture"));
     assert(shader_);
 
     // Note: there's only one shader in this demo, so I'll activate it here. For a more complex game
@@ -211,6 +218,7 @@ void Renderer::initRenderer() {
 
     // get some demo models into memory
     createModels();
+    createBorder();
 }
 
 void Renderer::updateRenderArea() {
@@ -262,6 +270,19 @@ void Renderer::createModels() {
 
     // Create a model and put it in the back of the render list.
     models_.emplace_back(vertices, indices, spAndroidRobotTexture);
+}
+
+void Renderer::createBorder() {
+    std::vector<Vertex> borderVertices = {
+            Vertex(Vector3{1, 1, 0}, Vector2{0, 0}), // 0
+            Vertex(Vector3{-1, 1, 0}, Vector2{1, 0}), // 1
+            Vertex(Vector3{-1, -1, 0}, Vector2{1, 1}), // 2
+            Vertex(Vector3{1, -1, 0}, Vector2{0, 1}) // 3
+    };
+    std::vector<Index> borderIndices = {
+            0, 1, 2, 3
+    };
+    border_.emplace(borderVertices, borderIndices, nullptr);
 }
 
 void Renderer::handleInput() {

@@ -11,7 +11,9 @@ Shader *Shader::loadShader(
         const std::string &fragmentSource,
         const std::string &positionAttributeName,
         const std::string &uvAttributeName,
-        const std::string &projectionMatrixUniformName) {
+        const std::string &projectionMatrixUniformName,
+        const std::string &colorUniformName,
+        const std::string &hasTextureUniformName) {
     Shader *shader = nullptr;
 
     GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
@@ -56,17 +58,23 @@ Shader *Shader::loadShader(
             GLint projectionMatrixUniform = glGetUniformLocation(
                     program,
                     projectionMatrixUniformName.c_str());
+            GLint colorUniform = glGetUniformLocation(program, colorUniformName.c_str());
+            GLint hasTextureUniform = glGetUniformLocation(program, hasTextureUniformName.c_str());
 
             // Only create a new shader if all the attributes are found.
             if (positionAttribute != -1
                 && uvAttribute != -1
-                && projectionMatrixUniform != -1) {
+                && projectionMatrixUniform != -1
+                && colorUniform != -1
+                && hasTextureUniform != -1) {
 
                 shader = new Shader(
                         program,
                         positionAttribute,
                         uvAttribute,
-                        projectionMatrixUniform);
+                        projectionMatrixUniform,
+                        colorUniform,
+                        hasTextureUniform);
             } else {
                 glDeleteProgram(program);
             }
@@ -145,6 +153,7 @@ void Shader::drawModel(const Model &model) const {
     glEnableVertexAttribArray(uv_);
 
     // Setup the texture
+    glUniform1i(hasTexture_, 1);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, model.getTexture().getTextureID());
 
@@ -155,6 +164,42 @@ void Shader::drawModel(const Model &model) const {
     glDisableVertexAttribArray(position_);
 }
 
+void Shader::drawBorder(const Model &model) const {
+    // The position attribute is 3 floats
+    glVertexAttribPointer(
+            position_, // attrib
+            3, // elements
+            GL_FLOAT, // of type float
+            GL_FALSE, // don't normalize
+            sizeof(Vertex), // stride is Vertex bytes
+            model.getVertexData() // pull from the start of the vertex data
+    );
+    glEnableVertexAttribArray(position_);
+
+    // The uv attribute is 2 floats
+    glVertexAttribPointer(
+            uv_, // attrib
+            2, // elements
+            GL_FLOAT, // of type float
+            GL_FALSE, // don't normalize
+            sizeof(Vertex), // stride is Vertex bytes
+            ((uint8_t *) model.getVertexData()) + sizeof(Vector3) // offset Vector3 from the start
+    );
+    glEnableVertexAttribArray(uv_);
+
+    glUniform1i(hasTexture_, 0);
+
+    // Draw as an outline
+    glDrawElements(GL_LINE_LOOP, model.getIndexCount(), GL_UNSIGNED_SHORT, model.getIndexData());
+
+    glDisableVertexAttribArray(uv_);
+    glDisableVertexAttribArray(position_);
+}
+
 void Shader::setProjectionMatrix(float *projectionMatrix) const {
     glUniformMatrix4fv(projectionMatrix_, 1, false, projectionMatrix);
+}
+
+void Shader::setColor(float *color) const {
+    glUniform4fv(color_, 1, color);
 }

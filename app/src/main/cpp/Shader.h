@@ -31,7 +31,9 @@ public:
             const std::string &fragmentSource,
             const std::string &positionAttributeName,
             const std::string &uvAttributeName,
-            const std::string &projectionMatrixUniformName);
+            const std::string &projectionMatrixUniformName,
+            const std::string &colorUniformName,
+            const std::string &hasTextureUniformName);
 
     inline ~Shader() {
         if (program_) {
@@ -57,10 +59,22 @@ public:
     void drawModel(const Model &model) const;
 
     /*!
+     * Renders a single model as an outline
+     * @param model a model to render
+     */
+    void drawBorder(const Model &model) const;
+
+    /*!
      * Sets the model/view/projection matrix in the shader.
      * @param projectionMatrix sixteen floats, column major, defining an OpenGL projection matrix.
      */
     void setProjectionMatrix(float *projectionMatrix) const;
+
+    /*!
+     * Sets the color to render with.
+     * @param color an array of 4 floats, representing RGBA values.
+     */
+    void setColor(float *color) const;
 
 private:
     /*!
@@ -77,19 +91,27 @@ private:
      * @param position the attribute location of the position
      * @param uv the attribute location of the uv coordinates
      * @param projectionMatrix the uniform location of the projection matrix
+     * @param color the uniform location of the color
+     * @param hasTexture the uniform location of the hasTexture flag
      */
     constexpr Shader(
             GLuint program,
             GLint position,
             GLint uv,
-            GLint projectionMatrix)
+            GLint projectionMatrix,
+            GLint color,
+            GLint hasTexture)
             : program_(program),
               position_(position),
               uv_(uv),
-              projectionMatrix_(projectionMatrix) {}
+              projectionMatrix_(projectionMatrix),
+              color_(color),
+              hasTexture_(hasTexture) {}
 
     GLuint program_;
     GLint position_;
     GLint uv_;
     GLint projectionMatrix_;
+    GLint color_;
+    GLint hasTexture_;
 };

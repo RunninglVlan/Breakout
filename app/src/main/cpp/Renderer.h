@@ -2,6 +2,7 @@
 
 #include <EGL/egl.h>
 #include <memory>
+#include <optional>
 
 #include "Model.h"
 #include "Shader.h"
@@ -57,6 +58,8 @@ private:
      */
     void createModels();
 
+    void createBorder();
+
     android_app *app_;
     EGLDisplay display_;
     EGLSurface surface_;
@@ -68,4 +71,5 @@ private:
 
     std::unique_ptr<Shader> shader_;
     std::vector<Model> models_;
+    std::optional<Model> border_;
 };
