@@ -185,19 +185,13 @@ void Renderer::initRenderer() {
                     && eglGetConfigAttrib(display, config, EGL_GREEN_SIZE, &green)
                     && eglGetConfigAttrib(display, config, EGL_BLUE_SIZE, &blue)
                     && eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &depth)) {
-                    std::stringstream message;
-                    message << "Found config with " << red << ", " << green << ", " << blue << ", "
-                            << depth;
-                    log(message.str());
+                    log(std::format("Found config with {}, {}, {}, {}", red, green, blue, depth));
                     return red == 8 && green == 8 && blue == 8 && depth == 24;
                 }
                 return false;
             });
 
-    std::stringstream message;
-    message << "Found " << numConfigs << " configs\n";
-    message << "Chose " << config;
-    log(message.str());
+    log(std::format("Found {} configs. Chose {}", numConfigs, config));
 
     // create the proper window surface
     EGLint format;
@@ -322,8 +316,7 @@ void Renderer::handleInput() {
         switch (action & AMOTION_EVENT_ACTION_MASK) {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                message << "(" << pointer.id << ", " << x << ", " << y << ") "
-                     << "Pointer Down";
+                message << std::format("({}, {}, {}) Pointer Down", pointer.id, x, y);
                 break;
 
             case AMOTION_EVENT_ACTION_CANCEL:
@@ -332,8 +325,7 @@ void Renderer::handleInput() {
                 // code pass through on purpose.
             case AMOTION_EVENT_ACTION_UP:
             case AMOTION_EVENT_ACTION_POINTER_UP:
-                message << "(" << pointer.id << ", " << x << ", " << y << ") "
-                     << "Pointer Up";
+                message << std::format("({}, {}, {}) Pointer Up", pointer.id, x, y);
                 break;
 
             case AMOTION_EVENT_ACTION_MOVE:
@@ -344,7 +336,7 @@ void Renderer::handleInput() {
                     pointer = motionEvent.pointers[index];
                     x = GameActivityPointerAxes_getX(&pointer);
                     y = GameActivityPointerAxes_getY(&pointer);
-                    message << "(" << pointer.id << ", " << x << ", " << y << ")";
+                    message << std::format("({}, {}, {})", pointer.id, x, y);
 
                     if (index != (motionEvent.pointerCount - 1)) message << ",";
                     message << " ";
@@ -363,7 +355,7 @@ void Renderer::handleInput() {
     for (auto i = 0; i < inputBuffer->keyEventsCount; i++) {
         auto &keyEvent = inputBuffer->keyEvents[i];
         std::stringstream message;
-        message << "Key: " << keyEvent.keyCode << " ";
+        message << std::format("Key: {} ", keyEvent.keyCode);
         switch (keyEvent.action) {
             case AKEY_EVENT_ACTION_DOWN:
                 message << "Key Down";
@@ -376,7 +368,7 @@ void Renderer::handleInput() {
                 message << "Multiple Key Actions";
                 break;
             default:
-                message << "Unknown KeyEvent Action: " << keyEvent.action;
+                message << std::format("Unknown KeyEvent Action: {} ", keyEvent.action);
         }
         log(message.str());
     }
