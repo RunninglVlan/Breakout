@@ -20,6 +20,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags += "-std=c++20"
+                arguments += listOf("-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON")
             }
         }
     }
