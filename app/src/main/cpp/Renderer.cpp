@@ -224,6 +224,7 @@ void Renderer::updateRenderArea() {
         width_ = width;
         height_ = height;
         glViewport(0, 0, width, height);
+        logDebug(std::format("New render area: {}x{}", width, height));
 
         // make sure that we lazily recreate the projection matrix before we render
         shaderNeedsNewProjectionMatrix_ = true;
@@ -330,13 +331,13 @@ void Renderer::handleInput() {
     for (auto i = 0; i < inputBuffer->keyEventsCount; i++) {
         auto &keyEvent = inputBuffer->keyEvents[i];
         std::stringstream message;
-        message << std::format("Key: {} ", keyEvent.keyCode);
+        message << std::format("Key {} ", keyEvent.keyCode);
         switch (keyEvent.action) {
             case AKEY_EVENT_ACTION_DOWN:
-                message << "Key Down";
+                message << "Down";
                 break;
             case AKEY_EVENT_ACTION_UP:
-                message << "Key Up";
+                message << "Up";
                 break;
             case AKEY_EVENT_ACTION_MULTIPLE:
                 // Deprecated since Android API level 29.
