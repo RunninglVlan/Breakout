@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cassert>
+#include <android/asset_manager.h>
+#include <string>
 
 class Utility {
 public:
@@ -28,4 +30,12 @@ public:
             float far);
 
     static float *buildIdentityMatrix(float *outMatrix);
+
+    /**
+     * Loads a text file from the assets/ directory
+     * @param assetManager Asset manager to use
+     * @param path The path to the asset
+     * @return the contents of the file as a string. Returns an empty string on failure.
+     */
+    static std::string loadStringFromAsset(AAssetManager *assetManager, const char *path);
 };

@@ -1,6 +1,10 @@
 #include "Utility.h"
 
 #include <GLES3/gl3.h>
+#include <android/asset_manager.h>
+#include <format>
+#include <string>
+#include <vector>
 
 #include "log.h"
 
@@ -85,4 +89,19 @@ float *Utility::buildIdentityMatrix(float *outMatrix) {
     outMatrix[15] = 1.f;
 
     return outMatrix;
+}
+
+std::string Utility::loadStringFromAsset(AAssetManager *assetManager, const char *path) {
+    std::string outString;
+    AAsset *asset = AAssetManager_open(assetManager, path, AASSET_MODE_BUFFER);
+    if (asset == nullptr) {
+        logError(std::format("Failed to open asset: {}", path));
+        assert(asset != nullptr);
+    }
+    auto length = AAsset_getLength(asset);
+    std::vector<char> buffer(length);
+    AAsset_read(asset, buffer.data(), length);
+    outString.assign(buffer.begin(), buffer.end());
+    AAsset_close(asset);
+    return outString;
 }
