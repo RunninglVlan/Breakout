@@ -1,9 +1,8 @@
 #include <jni.h>
-
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include <game-activity/GameActivity.h>
 
-#include "AndroidOut.h"
+#include "log.h"
 #include "Renderer.h"
 
 extern "C" {
@@ -79,7 +78,7 @@ void android_main(struct android_app *pApp) {
             int events;
             android_poll_source *pSource;
             int result = ALooper_pollOnce(timeout, nullptr, &events,
-                                          reinterpret_cast<void**>(&pSource));
+                                          reinterpret_cast<void **>(&pSource));
             switch (result) {
                 case ALOOPER_POLL_TIMEOUT:
                     [[clang::fallthrough]];

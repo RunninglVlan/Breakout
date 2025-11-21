@@ -1,7 +1,8 @@
 #include "Utility.h"
-#include "AndroidOut.h"
 
 #include <GLES3/gl3.h>
+
+#include "log.h"
 
 #define CHECK_ERROR(e) case e: log("GL Error: "#e); break;
 

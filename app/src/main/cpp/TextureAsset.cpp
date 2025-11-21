@@ -1,19 +1,21 @@
-#include <android/imagedecoder.h>
 #include "TextureAsset.h"
-#include "AndroidOut.h"
+
+#include <android/imagedecoder.h>
+
+#include "log.h"
 #include "Utility.h"
 
 std::shared_ptr<TextureAsset>
-TextureAsset::loadAsset(AAssetManager *assetManager, const std::string &assetPath) {
+TextureAsset::loadAsset(AAssetManager *assetManager, const char *assetPath) {
     // Get the image from asset manager
-    auto pAndroidRobotPng = AAssetManager_open(
+    auto asset = AAssetManager_open(
             assetManager,
-            assetPath.c_str(),
+            assetPath,
             AASSET_MODE_BUFFER);
 
     // Make a decoder to turn it into a texture
     AImageDecoder *pAndroidDecoder = nullptr;
-    auto result = AImageDecoder_createFromAAsset(pAndroidRobotPng, &pAndroidDecoder);
+    auto result = AImageDecoder_createFromAAsset(asset, &pAndroidDecoder);
     assert(result == ANDROID_IMAGE_DECODER_SUCCESS);
 
     // make sure we get 8 bits per channel out. RGBA order.
@@ -67,7 +69,7 @@ TextureAsset::loadAsset(AAssetManager *assetManager, const std::string &assetPat
 
     // cleanup helpers
     AImageDecoder_delete(pAndroidDecoder);
-    AAsset_close(pAndroidRobotPng);
+    AAsset_close(asset);
 
     // Create a shared pointer so it can be cleaned up easily/automatically
     return std::shared_ptr<TextureAsset>(new TextureAsset(textureId));

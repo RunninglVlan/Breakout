@@ -7,7 +7,7 @@
 #include <android/imagedecoder.h>
 #include <sstream>
 
-#include "AndroidOut.h"
+#include "log.h"
 #include "Shader.h"
 #include "Utility.h"
 #include "TextureAsset.h"
@@ -20,19 +20,19 @@
  *
  * This works by creating an istringstream of the input c-style string. Then that is used to create
  * a vector -- each element of the vector is a new element in the input string. Finally a foreach
- * loop consumes this and outputs it to logcat using @a aout
+ * loop consumes this and outputs it to logcat using @a log
  */
 #define PRINT_GL_STRING_AS_LIST(s) { \
 std::istringstream extensionStream((const char *) glGetString(s));\
 std::vector<std::string> extensionList(\
         std::istream_iterator<std::string>{extensionStream},\
         std::istream_iterator<std::string>());\
-std::stringstream aout;\
-aout << #s":\n";\
+std::stringstream macroMessage;\
+macroMessage << #s":\n";\
 for (auto& extension: extensionList) {\
-    aout << extension << "\n";\
+    macroMessage << extension << "\n";\
 }\
-log(aout.str());\
+log(macroMessage.str());\
 }
 
 //! Color for cornflower blue. Can be sent directly to glClearColor
@@ -185,19 +185,19 @@ void Renderer::initRenderer() {
                     && eglGetConfigAttrib(display, config, EGL_GREEN_SIZE, &green)
                     && eglGetConfigAttrib(display, config, EGL_BLUE_SIZE, &blue)
                     && eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &depth)) {
-                    std::stringstream aout;
-                    aout << "Found config with " << red << ", " << green << ", " << blue << ", "
-                         << depth;
-                    log(aout.str());
+                    std::stringstream message;
+                    message << "Found config with " << red << ", " << green << ", " << blue << ", "
+                            << depth;
+                    log(message.str());
                     return red == 8 && green == 8 && blue == 8 && depth == 24;
                 }
                 return false;
             });
 
-    std::stringstream aout;
-    aout << "Found " << numConfigs << " configs\n";
-    aout << "Chose " << config;
-    log(aout.str());
+    std::stringstream message;
+    message << "Found " << numConfigs << " configs\n";
+    message << "Chose " << config;
+    log(message.str());
 
     // create the proper window surface
     EGLint format;
@@ -310,8 +310,8 @@ void Renderer::handleInput() {
         // Find the pointer index, mask and bitshift to turn it into a readable value.
         auto pointerIndex = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
                 >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-        std::stringstream aout;
-        aout << "Pointer(s): ";
+        std::stringstream message;
+        message << "Pointer(s): ";
 
         // get the x and y position of this event if it is not ACTION_MOVE.
         auto &pointer = motionEvent.pointers[pointerIndex];
@@ -322,7 +322,7 @@ void Renderer::handleInput() {
         switch (action & AMOTION_EVENT_ACTION_MASK) {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                aout << "(" << pointer.id << ", " << x << ", " << y << ") "
+                message << "(" << pointer.id << ", " << x << ", " << y << ") "
                      << "Pointer Down";
                 break;
 
@@ -332,7 +332,7 @@ void Renderer::handleInput() {
                 // code pass through on purpose.
             case AMOTION_EVENT_ACTION_UP:
             case AMOTION_EVENT_ACTION_POINTER_UP:
-                aout << "(" << pointer.id << ", " << x << ", " << y << ") "
+                message << "(" << pointer.id << ", " << x << ", " << y << ") "
                      << "Pointer Up";
                 break;
 
@@ -344,17 +344,17 @@ void Renderer::handleInput() {
                     pointer = motionEvent.pointers[index];
                     x = GameActivityPointerAxes_getX(&pointer);
                     y = GameActivityPointerAxes_getY(&pointer);
-                    aout << "(" << pointer.id << ", " << x << ", " << y << ")";
+                    message << "(" << pointer.id << ", " << x << ", " << y << ")";
 
-                    if (index != (motionEvent.pointerCount - 1)) aout << ",";
-                    aout << " ";
+                    if (index != (motionEvent.pointerCount - 1)) message << ",";
+                    message << " ";
                 }
-                aout << "Pointer Move";
+                message << "Pointer Move";
                 break;
             default:
-                aout << "Unknown MotionEvent Action: " << action;
+                message << "Unknown MotionEvent Action: " << action;
         }
-        log(aout.str());
+        log(message.str());
     }
     // clear the motion input count in this buffer for main thread to re-use.
     android_app_clear_motion_events(inputBuffer);
@@ -362,23 +362,23 @@ void Renderer::handleInput() {
     // handle input key events.
     for (auto i = 0; i < inputBuffer->keyEventsCount; i++) {
         auto &keyEvent = inputBuffer->keyEvents[i];
-        std::stringstream aout;
-        aout << "Key: " << keyEvent.keyCode <<" ";
+        std::stringstream message;
+        message << "Key: " << keyEvent.keyCode << " ";
         switch (keyEvent.action) {
             case AKEY_EVENT_ACTION_DOWN:
-                aout << "Key Down";
+                message << "Key Down";
                 break;
             case AKEY_EVENT_ACTION_UP:
-                aout << "Key Up";
+                message << "Key Up";
                 break;
             case AKEY_EVENT_ACTION_MULTIPLE:
                 // Deprecated since Android API level 29.
-                aout << "Multiple Key Actions";
+                message << "Multiple Key Actions";
                 break;
             default:
-                aout << "Unknown KeyEvent Action: " << keyEvent.action;
+                message << "Unknown KeyEvent Action: " << keyEvent.action;
         }
-        log(aout.str());
+        log(message.str());
     }
     // clear the key input count too.
     android_app_clear_key_events(inputBuffer);
