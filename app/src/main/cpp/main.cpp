@@ -58,7 +58,7 @@ bool motion_event_filter_func(const GameActivityMotionEvent *motionEvent) {
  */
 void android_main(struct android_app *pApp) {
     // Can be removed, useful to ensure your code is running
-    log("Welcome to android_main");
+    logDebug("Welcome to android_main");
 
     // Register an event handler for Android events
     pApp->onAppCmd = handle_cmd;
@@ -87,7 +87,7 @@ void android_main(struct android_app *pApp) {
                     done = true;
                     break;
                 case ALOOPER_EVENT_ERROR:
-                    log("ALooper_pollOnce returned an error");
+                    logError("ALooper_pollOnce returned an error");
                     break;
                 case ALOOPER_POLL_CALLBACK:
                     break;

@@ -43,7 +43,7 @@ Shader *Shader::loadShader(
                 glGetProgramInfoLog(program, logLength, nullptr, infoLog);
                 std::stringstream message;
                 message << "Failed to link program with:\n" << infoLog;
-                log(message.str());
+                logError(message.str());
                 delete[] infoLog;
             }
 
@@ -102,7 +102,7 @@ GLuint Shader::loadShader(GLenum shaderType, const std::string &shaderSource) {
                 glGetShaderInfoLog(shader, infoLength, nullptr, infoLog);
                 std::stringstream message;
                 message << "Failed to compile with:\n" << infoLog;
-                log(message.str());
+                logError(message.str());
                 delete[] infoLog;
             }
 

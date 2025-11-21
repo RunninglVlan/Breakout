@@ -1,6 +1,7 @@
 #include "TextureAsset.h"
 
 #include <android/imagedecoder.h>
+#include <format>
 
 #include "log.h"
 #include "Utility.h"
@@ -12,6 +13,10 @@ TextureAsset::loadAsset(AAssetManager *assetManager, const char *assetPath) {
             assetManager,
             assetPath,
             AASSET_MODE_BUFFER);
+    if (asset == nullptr) {
+        logError(std::format("Failed to open asset: {}", assetPath));
+        assert(asset != nullptr);
+    }
 
     // Make a decoder to turn it into a texture
     AImageDecoder *pAndroidDecoder = nullptr;

@@ -4,13 +4,13 @@
 
 #include "log.h"
 
-#define CHECK_ERROR(e) case e: log("GL Error: "#e); break;
+#define CHECK_ERROR(e) case e: logError("GL Error: "#e); break;
 
 bool Utility::checkAndLogGlError(bool alwaysLog) {
     GLenum error = glGetError();
     if (error == GL_NO_ERROR) {
         if (alwaysLog) {
-            log("No GL error");
+            logDebug("No GL error");
         }
         return true;
     } else {
@@ -21,7 +21,7 @@ bool Utility::checkAndLogGlError(bool alwaysLog) {
             CHECK_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
             CHECK_ERROR(GL_OUT_OF_MEMORY);
             default:
-                log(std::string("Unknown GL error: ") + (const char *) error);
+                logError(std::string("Unknown GL error: ") + (const char *) error);
         }
         return false;
     }

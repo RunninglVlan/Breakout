@@ -13,7 +13,7 @@
 #include "TextureAsset.h"
 
 //! executes glGetString and outputs the result to logcat
-#define PRINT_GL_STRING(s) {log(std::string(#s": ") + (const char *)glGetString(s));}
+#define PRINT_GL_STRING(s) {logDebug(std::string(#s": ") + (const char *)glGetString(s));}
 
 /*!
  * @brief if glGetString returns a space separated list of elements, prints each one on a new line
@@ -32,7 +32,7 @@ macroMessage << #s":\n";\
 for (auto& extension: extensionList) {\
     macroMessage << extension << "\n";\
 }\
-log(macroMessage.str());\
+logDebug(macroMessage.str());\
 }
 
 //! Color for cornflower blue. Can be sent directly to glClearColor
@@ -185,13 +185,14 @@ void Renderer::initRenderer() {
                     && eglGetConfigAttrib(display, config, EGL_GREEN_SIZE, &green)
                     && eglGetConfigAttrib(display, config, EGL_BLUE_SIZE, &blue)
                     && eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &depth)) {
-                    log(std::format("Found config with {}, {}, {}, {}", red, green, blue, depth));
+                    logDebug(std::format("Found config with {}, {}, {}, {}", red, green, blue,
+                                         depth));
                     return red == 8 && green == 8 && blue == 8 && depth == 24;
                 }
                 return false;
             });
 
-    log(std::format("Found {} configs. Chose {}", numConfigs, config));
+    logDebug(std::format("Found {} configs. Chose {}", numConfigs, config));
 
     // create the proper window surface
     EGLint format;
@@ -346,7 +347,7 @@ void Renderer::handleInput() {
             default:
                 message << "Unknown MotionEvent Action: " << action;
         }
-        log(message.str());
+        logDebug(message.str());
     }
     // clear the motion input count in this buffer for main thread to re-use.
     android_app_clear_motion_events(inputBuffer);
@@ -370,7 +371,7 @@ void Renderer::handleInput() {
             default:
                 message << std::format("Unknown KeyEvent Action: {} ", keyEvent.action);
         }
-        log(message.str());
+        logDebug(message.str());
     }
     // clear the key input count too.
     android_app_clear_key_events(inputBuffer);
