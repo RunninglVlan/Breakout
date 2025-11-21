@@ -3,13 +3,13 @@
 
 #include <GLES3/gl3.h>
 
-#define CHECK_ERROR(e) case e: aout << "GL Error: "#e << std::endl; break;
+#define CHECK_ERROR(e) case e: log("GL Error: "#e); break;
 
 bool Utility::checkAndLogGlError(bool alwaysLog) {
     GLenum error = glGetError();
     if (error == GL_NO_ERROR) {
         if (alwaysLog) {
-            aout << "No GL error" << std::endl;
+            log("No GL error");
         }
         return true;
     } else {
@@ -20,7 +20,7 @@ bool Utility::checkAndLogGlError(bool alwaysLog) {
             CHECK_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
             CHECK_ERROR(GL_OUT_OF_MEMORY);
             default:
-                aout << "Unknown GL error: " << error << std::endl;
+                log(std::string("Unknown GL error: ") + (const char *) error);
         }
         return false;
     }

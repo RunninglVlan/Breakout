@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <android/imagedecoder.h>
+#include <sstream>
 
 #include "AndroidOut.h"
 #include "Shader.h"
@@ -12,7 +13,7 @@
 #include "TextureAsset.h"
 
 //! executes glGetString and outputs the result to logcat
-#define PRINT_GL_STRING(s) {aout << #s": "<< glGetString(s) << std::endl;}
+#define PRINT_GL_STRING(s) {log(std::string(#s": ") + (const char *)glGetString(s));}
 
 /*!
  * @brief if glGetString returns a space separated list of elements, prints each one on a new line
@@ -26,11 +27,12 @@ std::istringstream extensionStream((const char *) glGetString(s));\
 std::vector<std::string> extensionList(\
         std::istream_iterator<std::string>{extensionStream},\
         std::istream_iterator<std::string>());\
+std::stringstream aout;\
 aout << #s":\n";\
 for (auto& extension: extensionList) {\
     aout << extension << "\n";\
 }\
-aout << std::endl;\
+log(aout.str());\
 }
 
 //! Color for cornflower blue. Can be sent directly to glClearColor
@@ -183,16 +185,19 @@ void Renderer::initRenderer() {
                     && eglGetConfigAttrib(display, config, EGL_GREEN_SIZE, &green)
                     && eglGetConfigAttrib(display, config, EGL_BLUE_SIZE, &blue)
                     && eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &depth)) {
-
+                    std::stringstream aout;
                     aout << "Found config with " << red << ", " << green << ", " << blue << ", "
-                         << depth << std::endl;
+                         << depth;
+                    log(aout.str());
                     return red == 8 && green == 8 && blue == 8 && depth == 24;
                 }
                 return false;
             });
 
-    aout << "Found " << numConfigs << " configs" << std::endl;
-    aout << "Chose " << config << std::endl;
+    std::stringstream aout;
+    aout << "Found " << numConfigs << " configs\n";
+    aout << "Chose " << config;
+    log(aout.str());
 
     // create the proper window surface
     EGLint format;
@@ -305,6 +310,7 @@ void Renderer::handleInput() {
         // Find the pointer index, mask and bitshift to turn it into a readable value.
         auto pointerIndex = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
                 >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+        std::stringstream aout;
         aout << "Pointer(s): ";
 
         // get the x and y position of this event if it is not ACTION_MOVE.
@@ -348,7 +354,7 @@ void Renderer::handleInput() {
             default:
                 aout << "Unknown MotionEvent Action: " << action;
         }
-        aout << std::endl;
+        log(aout.str());
     }
     // clear the motion input count in this buffer for main thread to re-use.
     android_app_clear_motion_events(inputBuffer);
@@ -356,6 +362,7 @@ void Renderer::handleInput() {
     // handle input key events.
     for (auto i = 0; i < inputBuffer->keyEventsCount; i++) {
         auto &keyEvent = inputBuffer->keyEvents[i];
+        std::stringstream aout;
         aout << "Key: " << keyEvent.keyCode <<" ";
         switch (keyEvent.action) {
             case AKEY_EVENT_ACTION_DOWN:
@@ -371,7 +378,7 @@ void Renderer::handleInput() {
             default:
                 aout << "Unknown KeyEvent Action: " << keyEvent.action;
         }
-        aout << std::endl;
+        log(aout.str());
     }
     // clear the key input count too.
     android_app_clear_key_events(inputBuffer);

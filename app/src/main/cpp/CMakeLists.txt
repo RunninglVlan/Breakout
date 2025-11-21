@@ -9,7 +9,6 @@ project("breakout")
 # one used for loading in your Kotlin/Java or AndroidManifest.txt files.
 add_library(breakout SHARED
         main.cpp
-        AndroidOut.cpp
         Renderer.cpp
         Shader.cpp
         TextureAsset.cpp
