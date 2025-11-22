@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "Utility.h"
 #include "TextureAsset.h"
+#include "Matrix.h"
 
 //! executes glGetString and outputs the result to logcat
 #define PRINT_GL_STRING(s) {logDebug(std::string(#s": ") + (const char *)glGetString(s));}
@@ -39,10 +40,9 @@ logDebug(macroMessage.str());\
 #define CORNFLOWER_BLUE 100 / 255.f, 149 / 255.f, 237 / 255.f, 1
 
 /*!
- * Half the height of the projection matrix. This gives you a renderable area of height 4 ranging
- * from -2 to 2
+ * Height of the projection matrix. This gives a renderable area of height 4 ranging from -2 to 2
  */
-static constexpr float kProjectionHalfHeight = 2.f;
+static constexpr float kProjectionHeight = 4.f;
 
 /*!
  * The near plane distance for the projection matrix. Since this is an orthographic projection
@@ -82,14 +82,12 @@ void Renderer::render() {
     // even if you change from the sample orthographic projection matrix as your aspect ratio has
     // likely changed.
     if (shaderNeedsNewProjectionMatrix_) {
-        // a placeholder projection matrix allocated on the stack. Column-major memory layout
-        float projectionMatrix[16] = {0};
+        float aspect = float(width_) / height_;
+        float width = kProjectionHeight * aspect;
 
-        // build an orthographic projection matrix for 2d rendering
-        Utility::buildOrthographicMatrix(
-                projectionMatrix,
-                kProjectionHalfHeight,
-                float(width_) / height_,
+        auto projectionMatrix = float4x4::Orthographic(
+                width,
+                kProjectionHeight,
                 kProjectionNearPlane,
                 kProjectionFarPlane);
 
@@ -252,10 +250,10 @@ void Renderer::createModels() {
      * 3 --- 2
      */
     std::vector<Vertex> vertices = {
-            Vertex(Vector3{1, 1, 0}, Vector2{0, 0}), // 0
-            Vertex(Vector3{-1, 1, 0}, Vector2{1, 0}), // 1
-            Vertex(Vector3{-1, -1, 0}, Vector2{1, 1}), // 2
-            Vertex(Vector3{1, -1, 0}, Vector2{0, 1}) // 3
+            Vertex(float3{1, 1, 0}, float2{0, 0}), // 0
+            Vertex(float3{-1, 1, 0}, float2{1, 0}), // 1
+            Vertex(float3{-1, -1, 0}, float2{1, 1}), // 2
+            Vertex(float3{1, -1, 0}, float2{0, 1}) // 3
     };
     std::vector<Index> indices = {
             0, 1, 2, 0, 2, 3
@@ -274,10 +272,10 @@ void Renderer::createModels() {
 
 void Renderer::createBorder() {
     std::vector<Vertex> borderVertices = {
-            Vertex(Vector3{1, 1, 0}, Vector2{0, 0}), // 0
-            Vertex(Vector3{-1, 1, 0}, Vector2{1, 0}), // 1
-            Vertex(Vector3{-1, -1, 0}, Vector2{1, 1}), // 2
-            Vertex(Vector3{1, -1, 0}, Vector2{0, 1}) // 3
+            Vertex(float3{1, 1, 0}, float2{0, 0}), // 0
+            Vertex(float3{-1, 1, 0}, float2{1, 0}), // 1
+            Vertex(float3{-1, -1, 0}, float2{1, 1}), // 2
+            Vertex(float3{1, -1, 0}, float2{0, 1}) // 3
     };
     std::vector<Index> borderIndices = {
             0, 1, 2, 3

@@ -3,30 +3,14 @@
 #include <vector>
 
 #include "TextureAsset.h"
-
-union Vector3 {
-    struct {
-        float x, y, z;
-    };
-    float idx[3];
-};
-
-union Vector2 {
-    struct {
-        float x, y;
-    };
-    struct {
-        float u, v;
-    };
-    float idx[2];
-};
+#include "Vector.h"
 
 struct Vertex {
-    constexpr Vertex(const Vector3 &inPosition, const Vector2 &inUV) : position(inPosition),
-                                                                       uv(inUV) {}
+    constexpr Vertex(const float3 &inPosition, const float2 &inUV) : position(inPosition),
+                                                                     uv(inUV) {}
 
-    Vector3 position;
-    Vector2 uv;
+    float3 position;
+    float2 uv;
 };
 
 typedef uint16_t Index;

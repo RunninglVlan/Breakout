@@ -3,11 +3,13 @@
 #include <string>
 #include <GLES3/gl3.h>
 
+#include "Matrix.h"
+
 class Model;
 
 /*!
  * A class representing a simple shader program. It consists of vertex and fragment components. The
- * input attributes are a position (as a Vector3) and a uv (as a Vector2). It also takes a uniform
+ * input attributes are a position (as a float3) and a uv (as a float2). It also takes a uniform
  * to be used as the entire model/view/projection matrix. The shader expects a single texture for
  * fragment shading, and does no other lighting calculations (thus no uniforms for lights or normal
  * attributes).
@@ -65,10 +67,10 @@ public:
     void drawBorder(const Model &model) const;
 
     /*!
-     * Sets the model/view/projection matrix in the shader.
-     * @param projectionMatrix sixteen floats, column major, defining an OpenGL projection matrix.
+     * Sets the projection matrix in the shader.
+     * @param projectionMatrix a float4x4 to be used as the projection matrix
      */
-    void setProjectionMatrix(float *projectionMatrix) const;
+    void setProjectionMatrix(const float4x4 &projectionMatrix) const;
 
     /*!
      * Sets the color to render with.

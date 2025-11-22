@@ -148,7 +148,7 @@ void Shader::drawModel(const Model &model) const {
             GL_FLOAT, // of type float
             GL_FALSE, // don't normalize
             sizeof(Vertex), // stride is Vertex bytes
-            ((uint8_t *) model.getVertexData()) + sizeof(Vector3) // offset Vector3 from the start
+            ((uint8_t *) model.getVertexData()) + sizeof(float3) // offset float3 from the start
     );
     glEnableVertexAttribArray(uv_);
 
@@ -183,7 +183,7 @@ void Shader::drawBorder(const Model &model) const {
             GL_FLOAT, // of type float
             GL_FALSE, // don't normalize
             sizeof(Vertex), // stride is Vertex bytes
-            ((uint8_t *) model.getVertexData()) + sizeof(Vector3) // offset Vector3 from the start
+            ((uint8_t *) model.getVertexData()) + sizeof(float3) // offset float3 from the start
     );
     glEnableVertexAttribArray(uv_);
 
@@ -196,8 +196,8 @@ void Shader::drawBorder(const Model &model) const {
     glDisableVertexAttribArray(position_);
 }
 
-void Shader::setProjectionMatrix(float *projectionMatrix) const {
-    glUniformMatrix4fv(projectionMatrix_, 1, false, projectionMatrix);
+void Shader::setProjectionMatrix(const float4x4 &projectionMatrix) const {
+    glUniformMatrix4fv(projectionMatrix_, 1, false, (const GLfloat *) &projectionMatrix);
 }
 
 void Shader::setColor(float *color) const {
