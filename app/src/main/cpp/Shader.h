@@ -25,7 +25,8 @@ public:
      * @param fragmentSource The full source code of your fragment program
      * @param positionAttributeName The name of the position attribute in your vertex program
      * @param uvAttributeName The name of the uv coordinate attribute in your vertex program
-     * @param projectionMatrixUniformName The name of your model/view/projection matrix uniform
+     * @param modelMatrixUniformName The name of model matrix uniform
+     * @param projectionMatrixUniformName The name of projection matrix uniform
      * @return a valid Shader on success, otherwise null.
      */
     static Shader *loadShader(
@@ -33,6 +34,7 @@ public:
             const std::string &fragmentSource,
             const std::string &positionAttributeName,
             const std::string &uvAttributeName,
+            const std::string &modelMatrixUniformName,
             const std::string &projectionMatrixUniformName,
             const std::string &colorUniformName,
             const std::string &hasTextureUniformName);
@@ -92,6 +94,7 @@ private:
      * @param program the GL program id of the shader
      * @param position the attribute location of the position
      * @param uv the attribute location of the uv coordinates
+     * @param modelMatrix the uniform location of the model matrix
      * @param projectionMatrix the uniform location of the projection matrix
      * @param color the uniform location of the color
      * @param hasTexture the uniform location of the hasTexture flag
@@ -100,12 +103,14 @@ private:
             GLuint program,
             GLint position,
             GLint uv,
+            GLint modelMatrix,
             GLint projectionMatrix,
             GLint color,
             GLint hasTexture)
             : program_(program),
               position_(position),
               uv_(uv),
+              modelMatrix_(modelMatrix),
               projectionMatrix_(projectionMatrix),
               color_(color),
               hasTexture_(hasTexture) {}
@@ -113,6 +118,7 @@ private:
     GLuint program_;
     GLint position_;
     GLint uv_;
+    GLint modelMatrix_;
     GLint projectionMatrix_;
     GLint color_;
     GLint hasTexture_;

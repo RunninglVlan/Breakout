@@ -4,6 +4,7 @@
 
 #include "TextureAsset.h"
 #include "Vector.h"
+#include "Matrix.h"
 
 struct Vertex {
     constexpr Vertex(const float3 &inPosition, const float2 &inUV) : position(inPosition),
@@ -23,7 +24,21 @@ public:
             std::shared_ptr<TextureAsset> spTexture)
             : vertices_(std::move(vertices)),
               indices_(std::move(indices)),
-              spTexture_(std::move(spTexture)) {}
+              spTexture_(std::move(spTexture)),
+              modelMatrix_() {}
+
+    void setPosition(const float3 &position) {
+        modelMatrix_ = float4x4::Translation(position);
+    }
+
+    void translate(const float3 &offset) {
+        float4x4 translation = float4x4::Translation(offset);
+        modelMatrix_ = float4x4::mul(translation, modelMatrix_);
+    }
+
+    inline const float4x4 &getModelMatrix() const {
+        return modelMatrix_;
+    }
 
     inline const Vertex *getVertexData() const {
         return vertices_.data();
@@ -45,4 +60,5 @@ private:
     std::vector<Vertex> vertices_;
     std::vector<Index> indices_;
     std::shared_ptr<TextureAsset> spTexture_;
+    float4x4 modelMatrix_;
 };

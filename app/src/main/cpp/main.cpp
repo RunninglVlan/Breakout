@@ -1,6 +1,7 @@
 #include <jni.h>
 #include <game-activity/native_app_glue/android_native_app_glue.h>
 #include <game-activity/GameActivity.h>
+#include <chrono>
 
 #include "log.h"
 #include "Renderer.h"
@@ -68,6 +69,8 @@ void android_main(struct android_app *pApp) {
     // implemented in android_native_app_glue.c.
     android_app_set_motion_event_filter(pApp, motion_event_filter_func);
 
+    auto lastFrameTime = std::chrono::steady_clock::now();
+
     // This sets up a typical game/event loop. It will run until the app is destroyed.
     do {
         // Process all pending events before running game logic.
@@ -104,10 +107,14 @@ void android_main(struct android_app *pApp) {
             // user data remember to change it here
             auto *pRenderer = reinterpret_cast<Renderer *>(pApp->userData);
 
-            // Process game input
             pRenderer->handleInput();
 
-            // Render a frame
+            auto currentTime = std::chrono::steady_clock::now();
+            auto deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(
+                    currentTime - lastFrameTime).count();
+            lastFrameTime = currentTime;
+            pRenderer->update(deltaTime);
+
             pRenderer->render();
         }
     } while (!pApp->destroyRequested);

@@ -11,6 +11,7 @@ Shader *Shader::loadShader(
         const std::string &fragmentSource,
         const std::string &positionAttributeName,
         const std::string &uvAttributeName,
+        const std::string &modelMatrixUniformName,
         const std::string &projectionMatrixUniformName,
         const std::string &colorUniformName,
         const std::string &hasTextureUniformName) {
@@ -55,6 +56,9 @@ Shader *Shader::loadShader(
             // indices with layout= in your shader, but it is not done in this sample
             GLint positionAttribute = glGetAttribLocation(program, positionAttributeName.c_str());
             GLint uvAttribute = glGetAttribLocation(program, uvAttributeName.c_str());
+            GLint modelMatrixUniform = glGetUniformLocation(
+                    program,
+                    modelMatrixUniformName.c_str());
             GLint projectionMatrixUniform = glGetUniformLocation(
                     program,
                     projectionMatrixUniformName.c_str());
@@ -64,6 +68,7 @@ Shader *Shader::loadShader(
             // Only create a new shader if all the attributes are found.
             if (positionAttribute != -1
                 && uvAttribute != -1
+                && modelMatrixUniform != -1
                 && projectionMatrixUniform != -1
                 && colorUniform != -1
                 && hasTextureUniform != -1) {
@@ -72,6 +77,7 @@ Shader *Shader::loadShader(
                         program,
                         positionAttribute,
                         uvAttribute,
+                        modelMatrixUniform,
                         projectionMatrixUniform,
                         colorUniform,
                         hasTextureUniform);
@@ -152,6 +158,7 @@ void Shader::drawModel(const Model &model) const {
     );
     glEnableVertexAttribArray(uv_);
 
+    glUniformMatrix4fv(modelMatrix_, 1, GL_FALSE, (const GLfloat *) &model.getModelMatrix());
     // Setup the texture
     glUniform1i(hasTexture_, 1);
     glActiveTexture(GL_TEXTURE0);
@@ -187,6 +194,7 @@ void Shader::drawBorder(const Model &model) const {
     );
     glEnableVertexAttribArray(uv_);
 
+    glUniformMatrix4fv(modelMatrix_, 1, GL_FALSE, (const GLfloat *) &model.getModelMatrix());
     glUniform1i(hasTexture_, 0);
 
     // Draw as an outline

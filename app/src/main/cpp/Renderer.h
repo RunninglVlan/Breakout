@@ -34,6 +34,8 @@ public:
      */
     void handleInput();
 
+    void update(float deltaTime);
+
     /*!
      * Renders all the models in the renderer
      */

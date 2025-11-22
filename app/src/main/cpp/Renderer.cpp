@@ -199,8 +199,8 @@ void Renderer::initRenderer() {
     auto fragment = Utility::loadStringFromAsset(assetManager, "shaders/fragment.glsl");
 
     shader_ = std::unique_ptr<Shader>(
-            Shader::loadShader(vertex, fragment, "inPosition", "inUV", "uProjection", "uColor",
-                             "uHasTexture"));
+            Shader::loadShader(vertex, fragment, "inPosition", "inUV", "uModel", "uProjection",
+                               "uColor", "uHasTexture"));
     assert(shader_);
 
     // Note: there's only one shader in this demo, so I'll activate it here. For a more complex game
@@ -369,4 +369,8 @@ void Renderer::handleInput() {
     }
     // clear the key input count too.
     android_app_clear_key_events(inputBuffer);
+}
+
+void Renderer::update(float deltaTime) {
+    border_->translate({0.1f * deltaTime, 0.0f, 0.0f});
 }
