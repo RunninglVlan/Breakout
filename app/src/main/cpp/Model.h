@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "TextureAsset.h"
 
 union Vector3 {
